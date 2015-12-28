@@ -1,8 +1,6 @@
 package com.fasterxml.jackson.simple.tree;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.simple.ob.JSON;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,7 +25,7 @@ public class SimpleWriteTest extends TestBase
         stuff.put("a", new JsonNumber(15));
         stuff.put("b", JsonBoolean.TRUE);
         stuff.put("c", new JsonString("foobar"));
-        
+
         assertEquals("{\"a\":15,\"b\":true,\"c\":\"foobar\"}",
                 writeTree(new SimpleTreeCodec(), new JsonObject(stuff)));
     }

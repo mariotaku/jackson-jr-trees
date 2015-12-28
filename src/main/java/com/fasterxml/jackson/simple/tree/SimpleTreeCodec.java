@@ -2,143 +2,110 @@ package com.fasterxml.jackson.simple.tree;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.TreeCodec;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.simple.ob.JSON;
 
 import java.io.IOException;
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
 
 public class SimpleTreeCodec extends TreeCodec {
 
+    public static final SimpleTreeCodec SINGLETON = new SimpleTreeCodec();
+
     @Override
     public <T extends TreeNode> T readTree(JsonParser jsonParser) throws IOException {
-        return nodeFrom(JSON.std.from(jsonParser));
+        return nodeFrom(jsonParser);
     }
 
-    private <T extends TreeNode> T nodeFrom(Object value)
-    {
-        TreeNode node = null;
-
-        if (value instanceof Boolean)
-            node = ((Boolean) value ? JsonBoolean.TRUE : JsonBoolean.FALSE);
-        else if (value instanceof Number)
-            node = new JsonNumber(((Number) value));
-        else if (value instanceof String)
-            node = new JsonString((String) value);
-        else if (value instanceof List) {
+    private <T extends TreeNode> T nodeFrom(JsonParser jsonParser) throws IOException {
+        JsonToken currentToken = jsonParser.getCurrentToken();
+        if (currentToken == null) {
+            currentToken = jsonParser.nextToken();
+        }
+        TreeNode node;
+        if (currentToken == JsonToken.VALUE_TRUE || currentToken == JsonToken.VALUE_FALSE)
+            node = (jsonParser.getValueAsBoolean() ? JsonBoolean.TRUE : JsonBoolean.FALSE);
+        else if (currentToken == JsonToken.VALUE_NUMBER_INT || currentToken == JsonToken.VALUE_NUMBER_FLOAT)
+            node = new JsonNumber(jsonParser.getNumberValue());
+        else if (currentToken == JsonToken.VALUE_STRING)
+            node = new JsonString(jsonParser.getValueAsString());
+        else if (currentToken == JsonToken.START_ARRAY) {
             List<TreeNode> values = new ArrayList<TreeNode>();
-            for (Object el : (List) value) {
-                values.add(nodeFrom(el));
+            while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
+                values.add(nodeFrom(jsonParser));
             }
             node = new JsonArray(values);
-        }
-        else if (value instanceof Object[]) {
-            List<TreeNode> values = new ArrayList<TreeNode>();
-            for (Object el : (Object[]) value) {
-                values.add(nodeFrom(el));
-            }
-            node = new JsonArray(values);
-        }
-        else if (value instanceof Map) {
-            Map<String,TreeNode> values = new LinkedHashMap<String,TreeNode>();
-            for (Map.Entry entry : ((Map<?,?>) value).entrySet()) {
-                values.put(entry.getKey().toString(), nodeFrom(entry.getValue()));
+        } else if (currentToken == JsonToken.START_OBJECT) {
+            Map<String, TreeNode> values = new HashMap<String, TreeNode>();
+            while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+                final String currentName = jsonParser.getCurrentName();
+                jsonParser.nextToken();
+                values.put(currentName, nodeFrom(jsonParser));
             }
             node = new JsonObject(values);
+        } else if (currentToken == JsonToken.VALUE_NULL) {
+            node = null;
+        } else {
+            throw new UnsupportedOperationException("Unsupported token " + currentToken);
         }
 
+        //noinspection unchecked
         return (T) node;
     }
 
     @Override
     public void writeTree(JsonGenerator jsonGenerator, TreeNode treeNode) throws IOException {
-        JSON.std.write(valueOf(treeNode), jsonGenerator);
+        writeTreeInternal(jsonGenerator, treeNode);
     }
 
-    private Object valueOf(final TreeNode treeNode)
-    {
-        if (treeNode == null)
-            return null;
-        else if (treeNode instanceof JsonBoolean)
-            return treeNode == JsonBoolean.TRUE;
-        else if (treeNode instanceof JsonNumber)
-            return ((JsonNumber) treeNode).getValue();
-        else if (treeNode instanceof JsonString)
-            return ((JsonString) treeNode).getValue();
-        else if (treeNode instanceof JsonArray) {
-            return new AbstractList<Object>() {
-                @Override
-                public Object get(int index) {
-                    return valueOf(treeNode.get(index));
-                }
-
-                @Override
-                public int size() {
-                    return treeNode.size();
-                }
-            };
+    private void writeTreeInternal(JsonGenerator jsonGenerator, final TreeNode treeNode) throws IOException {
+        if (treeNode == null) {
+            jsonGenerator.writeNull();
+        } else if (treeNode instanceof JsonBoolean) {
+            jsonGenerator.writeBoolean(treeNode == JsonBoolean.TRUE);
+        } else if (treeNode instanceof JsonNumber) {
+            switch (treeNode.numberType()) {
+                case INT:
+                    jsonGenerator.writeNumber(((JsonNumber) treeNode).getValue().intValue());
+                    break;
+                case LONG:
+                    jsonGenerator.writeNumber(((JsonNumber) treeNode).getValue().longValue());
+                    break;
+                case BIG_INTEGER:
+                    jsonGenerator.writeNumber(((BigInteger) ((JsonNumber) treeNode).getValue()));
+                    break;
+                case FLOAT:
+                    jsonGenerator.writeNumber(((JsonNumber) treeNode).getValue().floatValue());
+                    break;
+                case DOUBLE:
+                    jsonGenerator.writeNumber(((JsonNumber) treeNode).getValue().doubleValue());
+                    break;
+                case BIG_DECIMAL:
+                    jsonGenerator.writeNumber(((BigDecimal) ((JsonNumber) treeNode).getValue()));
+                    break;
+            }
+        } else if (treeNode instanceof JsonString) {
+            jsonGenerator.writeString(((JsonString) treeNode).getValue());
+        } else if (treeNode instanceof JsonArray) {
+            jsonGenerator.writeStartArray();
+            for (int i = 0; i < treeNode.size(); i++) {
+                writeTreeInternal(jsonGenerator, treeNode.get(i));
+            }
+            jsonGenerator.writeEndArray();
+        } else if (treeNode instanceof JsonObject) {
+            Iterator<String> fieldNames = treeNode.fieldNames();
+            jsonGenerator.writeStartObject();
+            while (fieldNames.hasNext()) {
+                final String fieldName = fieldNames.next();
+                jsonGenerator.writeFieldName(fieldName);
+                writeTreeInternal(jsonGenerator, treeNode.get(fieldName));
+            }
+            jsonGenerator.writeEndObject();
         }
-        else if (treeNode instanceof JsonObject) {
-            return new AbstractMap<String, Object>() {
-                @Override
-                public Set<Entry<String, Object>> entrySet() {
-                    return new AbstractSet<Entry<String,Object>>() {
-                        @Override
-                        public Iterator<Entry<String, Object>> iterator() {
-                            return new Iterator<Entry<String, Object>>() {
-                                final Iterator<String> delegate = treeNode.fieldNames();
-
-                                @Override
-                                public boolean hasNext() {
-                                    return delegate.hasNext();
-                                }
-
-                                @Override
-                                public Entry<String, Object> next() {
-                                    final String key = delegate.next();
-                                    return new Entry<String, Object>() {
-                                        @Override
-                                        public String getKey() {
-                                            return key;
-                                        }
-
-                                        @Override
-                                        public Object getValue() {
-                                            return valueOf(treeNode.get(key));
-                                        }
-
-                                        @Override
-                                        public Object setValue(Object value) {
-                                            throw new UnsupportedOperationException();
-                                        }
-                                    };
-                                }
-
-                                @Override
-                                public void remove() {
-                                    throw new UnsupportedOperationException();
-                                }
-                            };
-                        }
-
-                        @Override
-                        public int size() {
-                            return treeNode.size();
-                        }
-                    };
-                }
-            };
-        }
-        else return treeNode;
+        jsonGenerator.flush();
     }
 
     @Override

@@ -82,12 +82,12 @@ abstract class JsonAbstractValue implements TreeNode
 
     @Override
     public JsonParser traverse() {
-        return null;
+        return SimpleTreeCodec.SINGLETON.treeAsTokens(this);
     }
 
     @Override
     public JsonParser traverse(ObjectCodec objectCodec) {
-        return null;
+        return SimpleTreeCodec.SINGLETON.treeAsTokens(this);
     }
 
     private static class JsonMissing extends JsonAbstractValue

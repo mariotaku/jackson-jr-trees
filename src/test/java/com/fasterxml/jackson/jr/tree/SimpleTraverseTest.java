@@ -1,6 +1,7 @@
-package com.fasterxml.jackson.simple.tree;
+package com.fasterxml.jackson.jr.tree;
 
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.jr.tree.JacksonJrSimpleTreeCodec;
 
 public class SimpleTraverseTest extends TestBase
 {

@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.simple.tree;
+package com.fasterxml.jackson.jr.tree;
 
 import java.io.IOException;
 import java.math.BigDecimal;

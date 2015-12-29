@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.simple.tree.util;
+package com.fasterxml.jackson.jr.tree.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,11 +7,11 @@ import java.math.BigInteger;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.base.ParserMinimalBase;
-import com.fasterxml.jackson.simple.tree.JacksonJrValue;
-import com.fasterxml.jackson.simple.tree.JsonArray;
-import com.fasterxml.jackson.simple.tree.JsonNumber;
-import com.fasterxml.jackson.simple.tree.JsonObject;
-import com.fasterxml.jackson.simple.tree.PackageVersion;
+import com.fasterxml.jackson.jr.tree.JacksonJrValue;
+import com.fasterxml.jackson.jr.tree.JsonArray;
+import com.fasterxml.jackson.jr.tree.JsonNumber;
+import com.fasterxml.jackson.jr.tree.JsonObject;
+import com.fasterxml.jackson.jr.tree.PackageVersion;
 
 /**
  * Facade over {@link JacksonJrValue} that implements {@link JsonParser} to allow

@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.simple.tree;
+package com.fasterxml.jackson.jr.tree;
 
 import java.util.Iterator;
 
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.simple.tree.util.TreeTraversingParser;
+import com.fasterxml.jackson.jr.tree.util.TreeTraversingParser;
 
 /**
  * Shared base class for all "simple" node types of Jackson Jr

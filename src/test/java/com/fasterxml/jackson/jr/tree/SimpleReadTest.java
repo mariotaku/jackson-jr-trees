@@ -1,8 +1,11 @@
-package com.fasterxml.jackson.simple.tree;
+package com.fasterxml.jackson.jr.tree;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.TreeCodec;
 import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.jr.tree.JacksonJrSimpleTreeCodec;
+import com.fasterxml.jackson.jr.tree.JsonArray;
+import com.fasterxml.jackson.jr.tree.JsonObject;
 
 import java.io.StringWriter;
 

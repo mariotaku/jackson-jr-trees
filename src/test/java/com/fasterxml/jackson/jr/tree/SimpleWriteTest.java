@@ -1,6 +1,14 @@
-package com.fasterxml.jackson.simple.tree;
+package com.fasterxml.jackson.jr.tree;
 
 import java.util.*;
+
+import com.fasterxml.jackson.jr.tree.JacksonJrSimpleTreeCodec;
+import com.fasterxml.jackson.jr.tree.JacksonJrValue;
+import com.fasterxml.jackson.jr.tree.JsonArray;
+import com.fasterxml.jackson.jr.tree.JsonBoolean;
+import com.fasterxml.jackson.jr.tree.JsonNumber;
+import com.fasterxml.jackson.jr.tree.JsonObject;
+import com.fasterxml.jackson.jr.tree.JsonString;
 
 public class SimpleWriteTest extends TestBase
 {

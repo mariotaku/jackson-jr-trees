@@ -1,11 +1,11 @@
-package com.fasterxml.jackson.simple.tree.util;
+package com.fasterxml.jackson.jr.tree.util;
 
 import java.util.*;
 
 import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.simple.tree.JacksonJrValue;
-import com.fasterxml.jackson.simple.tree.JsonArray;
-import com.fasterxml.jackson.simple.tree.JsonObject;
+import com.fasterxml.jackson.jr.tree.JacksonJrValue;
+import com.fasterxml.jackson.jr.tree.JsonArray;
+import com.fasterxml.jackson.jr.tree.JsonObject;
 
 /**
  * Helper class used by {@link TreeTraversingParser} to keep track

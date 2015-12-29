@@ -1,23 +1,24 @@
 package com.fasterxml.jackson.simple.tree;
 
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.TreeNode;
-
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.TreeNode;
+
 import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 
-public class JsonArray extends JsonAbstractValue
+public class JsonArray extends JacksonJrValue
 {
-    private final List<TreeNode> values;
+    private final List<JacksonJrValue> values;
 
     public JsonArray()
     {
-        this(Collections.<TreeNode>emptyList());
+        this(Collections.<JacksonJrValue>emptyList());
     }
 
-    public JsonArray(List<TreeNode> values)
+    public JsonArray(List<JacksonJrValue> values)
     {
         this.values = Collections.unmodifiableList(values);
     }
@@ -35,26 +36,44 @@ public class JsonArray extends JsonAbstractValue
     }
 
     @Override
-    public boolean isContainerNode()
-    {
+    public boolean isValueNode() {
+        return false;
+    }
+
+    @Override
+    public boolean isContainerNode() {
         return true;
     }
 
     @Override
-    public boolean isArray()
-    {
+    public boolean isArray() {
         return true;
     }
 
     @Override
-    public TreeNode get(int i)
+    public JacksonJrValue get(int i)
     {
-        return 0 <= i && i < values.size() ? values.get(i) : null;
+        return ((0 <= i) && (i < values.size())) ? values.get(i) : null;
     }
 
     @Override
-    public TreeNode path(int i)
+    public TreeNode get(String s) {
+        return null;
+    }
+
+    @Override
+    public JacksonJrValue path(int i)
     {
-        return 0 <= i && i < values.size() ? values.get(i) : MISSING;
+        return ((0 <= i) && (i < values.size())) ? values.get(i) : MISSING;
+    }
+
+    @Override
+    public TreeNode path(String s) {
+        return MISSING;
+    }
+    
+    @Override
+    protected JacksonJrValue _at(JsonPointer ptr) {
+        return get(ptr.getMatchingIndex());
     }
 }

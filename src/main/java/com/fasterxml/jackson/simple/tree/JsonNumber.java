@@ -12,7 +12,7 @@ import java.util.Map;
 import static com.fasterxml.jackson.core.JsonToken.VALUE_NUMBER_FLOAT;
 import static com.fasterxml.jackson.core.JsonToken.VALUE_NUMBER_INT;
 
-public class JsonNumber extends JsonAbstractValue
+public class JsonNumber extends JacksonJrValue.Scalar
 {
     private static final Map<Class<? extends Number>, JsonParser.NumberType> NUMBER_TYPES;
     static
@@ -36,10 +36,11 @@ public class JsonNumber extends JsonAbstractValue
 
     public JsonNumber(Number value)
     {
-        if (!NUMBER_TYPES.containsKey(value.getClass()))
-            throw new IllegalArgumentException("Unsupported Number type");
-        this._value = value;
-        this._numberType = NUMBER_TYPES.get(value.getClass());
+        _value = value;
+        _numberType = NUMBER_TYPES.get(value.getClass());
+        if (_numberType == null) {
+            throw new IllegalArgumentException("Unsupported Number type: "+value.getClass().getName());
+        }
     }
 
     public Number getValue()
@@ -58,12 +59,6 @@ public class JsonNumber extends JsonAbstractValue
             default:
                 return VALUE_NUMBER_INT;
         }
-    }
-
-    @Override
-    public boolean isValueNode()
-    {
-        return true;
     }
 
     @Override

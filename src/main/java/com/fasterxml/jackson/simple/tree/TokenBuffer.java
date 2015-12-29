@@ -504,6 +504,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
     }
 
     @Override
+    @Deprecated
     public JsonGenerator setFeatureMask(int mask) {
         _generatorFeatures = mask;
         return this;
@@ -1027,6 +1028,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
         }
     }
 
+    @Override
     protected void _reportUnsupportedOperation() {
         throw new UnsupportedOperationException("Called operation not supported for TokenBuffer");
     }

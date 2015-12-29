@@ -1,22 +1,23 @@
 package com.fasterxml.jackson.simple.tree;
 
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.TreeNode;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-public class JsonObject extends JsonAbstractValue
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.TreeNode;
+
+public class JsonObject extends JacksonJrValue
 {
-    private final Map<String, TreeNode> _values;
+    private final Map<String, JacksonJrValue> _values;
 
     public JsonObject()
     {
-        this(Collections.<String, TreeNode>emptyMap());
+        this(Collections.<String, JacksonJrValue>emptyMap());
     }
 
-    public JsonObject(Map<String, TreeNode> values)
+    public JsonObject(Map<String, JacksonJrValue> values)
     {
         this._values = Collections.unmodifiableMap(values);
     }
@@ -34,14 +35,17 @@ public class JsonObject extends JsonAbstractValue
     }
 
     @Override
-    public boolean isContainerNode()
-    {
+    public boolean isValueNode() {
+        return false;
+    }
+
+    @Override
+    public boolean isContainerNode() {
         return true;
     }
 
     @Override
-    public boolean isObject()
-    {
+    public boolean isObject() {
         return true;
     }
 
@@ -52,14 +56,28 @@ public class JsonObject extends JsonAbstractValue
     }
 
     @Override
-    public TreeNode get(String name)
-    {
-        return _values.containsKey(name) ? _values.get(name) : null;
+    public TreeNode get(int i) {
+        return null;
+    }
+    
+    @Override
+    public JacksonJrValue get(String name) {
+        return _values.get(name);
     }
 
     @Override
-    public TreeNode path(String name)
-    {
-        return _values.containsKey(name) ? _values.get(name) : MISSING;
+    public TreeNode path(int i) {
+        return MISSING;
+    }
+
+    @Override
+    public JacksonJrValue path(String name) {
+        JacksonJrValue v = _values.get(name);
+        return (v == null) ? MISSING : v;
+    }
+
+    @Override
+    protected JacksonJrValue _at(JsonPointer ptr) {
+        return get(ptr.getMatchingProperty());
     }
 }

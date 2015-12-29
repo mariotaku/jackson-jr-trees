@@ -2,25 +2,19 @@ package com.fasterxml.jackson.simple.tree;
 
 import com.fasterxml.jackson.core.JsonToken;
 
-public class JsonBoolean extends JsonAbstractValue
+public class JsonBoolean extends JacksonJrValue.Scalar
 {
-    public static JsonBoolean TRUE = new JsonBoolean();
-    public static JsonBoolean FALSE = new JsonBoolean();
+    public static JsonBoolean TRUE = new JsonBoolean(JsonToken.VALUE_TRUE);
+    public static JsonBoolean FALSE = new JsonBoolean(JsonToken.VALUE_FALSE);
 
-    private JsonBoolean()
-    {
-
+    private final JsonToken _token;
+    
+    private JsonBoolean(JsonToken t) {
+        _token = t;
     }
 
     @Override
-    public JsonToken asToken()
-    {
-        return this == TRUE ? JsonToken.VALUE_TRUE : JsonToken.VALUE_FALSE;
-    }
-
-    @Override
-    public boolean isValueNode()
-    {
-        return true;
+    public JsonToken asToken() {
+        return _token;
     }
 }

@@ -11,7 +11,7 @@ public class SimpleReadTest extends TestBase
     public void testSimpleList() throws Exception
     {
         final String INPUT = "[true,\"abc\"]";
-        final TreeCodec treeCodec = new SimpleTreeCodec();
+        final TreeCodec treeCodec = new JacksonJrSimpleTreeCodec();
         TreeNode node = treeCodec.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonArray);
         assertEquals(2, node.size());
@@ -25,7 +25,7 @@ public class SimpleReadTest extends TestBase
     public void testSimpleMap() throws Exception
     {
         final String INPUT = "{\"a\":1,\"b\":true,\"c\":3}";
-        final TreeCodec treeCodec = new SimpleTreeCodec();
+        final TreeCodec treeCodec = new JacksonJrSimpleTreeCodec();
         TreeNode node = treeCodec.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonObject);
         assertEquals(3, node.size());
@@ -39,7 +39,7 @@ public class SimpleReadTest extends TestBase
     public void testSimpleMixed() throws Exception
     {
         final String INPUT = "{\"a\":[1,2,{\"b\":true},3],\"c\":3}";
-        final TreeCodec treeCodec = new SimpleTreeCodec();
+        final TreeCodec treeCodec = new JacksonJrSimpleTreeCodec();
         TreeNode node = treeCodec.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonObject);
         assertEquals(2, node.size());

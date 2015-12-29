@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
 
-public class JsonString extends JsonAbstractValue
+public class JsonString extends JacksonJrValue.Scalar
 {
     private final String value;
 
-    public JsonString(String value)
+    public JsonString(String v)
     {
-        this.value = value;
+        value = v;
     }
 
     public String getValue()
@@ -22,11 +22,5 @@ public class JsonString extends JsonAbstractValue
     public JsonToken asToken()
     {
         return VALUE_STRING;
-    }
-
-    @Override
-    public boolean isValueNode()
-    {
-        return true;
     }
 }

@@ -19,7 +19,12 @@ public class JsonObject extends JacksonJrValue
 
     public JsonObject(Map<String, JacksonJrValue> values)
     {
-        this._values = Collections.unmodifiableMap(values);
+        // 28-Dec-2015, tatu: Can/should not create immutable maps, otherwise
+        //    can not support use case of constructing trees via codec's array/object
+        //    creation methods. Or, at least would need to figure out a way to configure
+        //    mutable/immutable case as part of codec's configuration?
+//        _values = Collections.unmodifiableMap(values);
+        _values = values;
     }
 
     @Override
@@ -79,5 +84,15 @@ public class JsonObject extends JacksonJrValue
     @Override
     protected JacksonJrValue _at(JsonPointer ptr) {
         return get(ptr.getMatchingProperty());
+    }
+
+    /*
+    /**********************************************************************
+    /* Extended API
+    /**********************************************************************
+     */
+
+    public Iterator<Map.Entry<String, JacksonJrValue>> fields() {
+        return _values.entrySet().iterator();
     }
 }

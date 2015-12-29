@@ -1,7 +1,6 @@
 package com.fasterxml.jackson.simple.tree;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.JsonToken;
@@ -11,28 +10,26 @@ import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 
 public class JsonArray extends JacksonJrValue
 {
-    private final List<JacksonJrValue> values;
+    private final List<JacksonJrValue> _values;
 
     public JsonArray()
     {
-        this(Collections.<JacksonJrValue>emptyList());
+        _values = Collections.<JacksonJrValue>emptyList();
     }
 
-    public JsonArray(List<JacksonJrValue> values)
+    public JsonArray(List<JacksonJrValue> v)
     {
-        this.values = Collections.unmodifiableList(values);
+        _values = Collections.unmodifiableList(v);
     }
 
     @Override
-    public JsonToken asToken()
-    {
+    public JsonToken asToken() {
         return START_ARRAY;
     }
 
     @Override
-    public int size()
-    {
-        return values.size();
+    public int size() {
+        return _values.size();
     }
 
     @Override
@@ -51,9 +48,8 @@ public class JsonArray extends JacksonJrValue
     }
 
     @Override
-    public JacksonJrValue get(int i)
-    {
-        return ((0 <= i) && (i < values.size())) ? values.get(i) : null;
+    public JacksonJrValue get(int i) {
+        return ((0 <= i) && (i < _values.size())) ? _values.get(i) : null;
     }
 
     @Override
@@ -62,9 +58,8 @@ public class JsonArray extends JacksonJrValue
     }
 
     @Override
-    public JacksonJrValue path(int i)
-    {
-        return ((0 <= i) && (i < values.size())) ? values.get(i) : MISSING;
+    public JacksonJrValue path(int i){
+        return ((0 <= i) && (i < _values.size())) ? _values.get(i) : MISSING;
     }
 
     @Override
@@ -75,5 +70,15 @@ public class JsonArray extends JacksonJrValue
     @Override
     protected JacksonJrValue _at(JsonPointer ptr) {
         return get(ptr.getMatchingIndex());
+    }
+
+    /*
+    /**********************************************************************
+    /* Extended API
+    /**********************************************************************
+     */
+
+    public Iterator<JacksonJrValue> elements() {
+        return _values.iterator();
     }
 }

@@ -3,6 +3,7 @@ package com.fasterxml.jackson.simple.tree;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -43,8 +44,12 @@ public class JsonNumber extends JacksonJrValue.Scalar
         }
     }
 
-    public Number getValue()
-    {
+    @Override
+    public boolean isNumber() {
+        return true;
+    }
+
+    public Number getValue() {
         return _value;
     }
 
@@ -62,8 +67,42 @@ public class JsonNumber extends JacksonJrValue.Scalar
     }
 
     @Override
-    public JsonParser.NumberType numberType()
-    {
+    public String asText() {
+        return String.valueOf(_value);
+    }
+    
+    @Override
+    public JsonParser.NumberType numberType() {
         return _numberType;
+    }
+
+    /*
+    /**********************************************************************
+    /* Extended API
+    /**********************************************************************
+     */
+    
+    public BigInteger asBigInteger() throws IOException {
+        if (_value instanceof BigInteger) {
+            return (BigInteger) _value;
+        }
+        if (_value instanceof BigDecimal) {
+            BigDecimal dec = (BigDecimal) _value;
+            return dec.toBigInteger();
+        }
+        return BigInteger.valueOf(_value.longValue());
+    }
+
+    public BigDecimal asBigDecimal() throws IOException {
+        if (_value instanceof BigDecimal) {
+            return (BigDecimal) _value;
+        }
+        if (_value instanceof BigInteger) {
+            return new BigDecimal((BigInteger) _value);
+        }
+        if ((_value instanceof Double) || (_value instanceof Float)) {
+            return new BigDecimal(_value.doubleValue());
+        }
+        return new BigDecimal(_value.longValue());
     }
 }

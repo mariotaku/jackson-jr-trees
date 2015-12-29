@@ -13,6 +13,16 @@ public class JacksonJrSimpleTreeCodec extends TreeCodec
 
     public static final JacksonJrSimpleTreeCodec SINGLETON = new JacksonJrSimpleTreeCodec();
 
+    protected ObjectCodec _objectCodec;
+
+    public JacksonJrSimpleTreeCodec() {
+        this(null);
+    }
+
+    public JacksonJrSimpleTreeCodec(ObjectCodec codec) {
+        _objectCodec = codec;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public <T extends TreeNode> T readTree(JsonParser p) throws IOException {
@@ -116,14 +126,8 @@ public class JacksonJrSimpleTreeCodec extends TreeCodec
     }
 
     @Override
-    public JsonParser treeAsTokens(TreeNode treeNode) {
-        final TokenBuffer buffer = new TokenBuffer(null, false);
-        try {
-            writeTree(buffer, treeNode);
-        } catch (IOException e) {
-
-        }
-        return buffer.asParser();
+    public JsonParser treeAsTokens(TreeNode node) {
+        return ((JacksonJrValue) node).traverse(_objectCodec);
     }
 
     /*

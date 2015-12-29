@@ -8,19 +8,21 @@ public class JsonString extends JacksonJrValue.Scalar
 {
     private final String value;
 
-    public JsonString(String v)
-    {
+    public JsonString(String v) {
         value = v;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return value;
     }
 
     @Override
-    public JsonToken asToken()
-    {
+    public JsonToken asToken() {
         return VALUE_STRING;
+    }
+
+    @Override
+    public String asText() {
+        return value;
     }
 }

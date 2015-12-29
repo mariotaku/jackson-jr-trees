@@ -17,4 +17,9 @@ public class JsonBoolean extends JacksonJrValue.Scalar
     public JsonToken asToken() {
         return _token;
     }
+
+    @Override
+    public String asText() {
+        return (_token == JsonToken.VALUE_TRUE) ? "true" : "false";
+    }
 }

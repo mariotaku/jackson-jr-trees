@@ -8,39 +8,40 @@ import java.io.StringWriter;
 
 public class SimpleReadTest extends TestBase
 {
+    private final TreeCodec TREE_CODEC = new JacksonJrSimpleTreeCodec();
+
     public void testSimpleList() throws Exception
     {
         final String INPUT = "[true,\"abc\"]";
-        final TreeCodec treeCodec = new JacksonJrSimpleTreeCodec();
-        TreeNode node = treeCodec.readTree(_factory.createParser(INPUT));
+        TreeNode node = TREE_CODEC.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonArray);
         assertEquals(2, node.size());
         // actually, verify with write...
         final StringWriter writer = new StringWriter();
-        final JsonGenerator jsonGenerator = _factory.createGenerator(writer);
-        treeCodec.writeTree(jsonGenerator, node);
+        final JsonGenerator g = _factory.createGenerator(writer);
+        TREE_CODEC.writeTree(g, node);
+        g.close();
         assertEquals(INPUT, writer.toString());
     }
 
     public void testSimpleMap() throws Exception
     {
         final String INPUT = "{\"a\":1,\"b\":true,\"c\":3}";
-        final TreeCodec treeCodec = new JacksonJrSimpleTreeCodec();
-        TreeNode node = treeCodec.readTree(_factory.createParser(INPUT));
+        TreeNode node = TREE_CODEC.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonObject);
         assertEquals(3, node.size());
         // actually, verify with write...
         final StringWriter writer = new StringWriter();
-        final JsonGenerator jsonGenerator = _factory.createGenerator(writer);
-        treeCodec.writeTree(jsonGenerator, node);
+        final JsonGenerator g = _factory.createGenerator(writer);
+        TREE_CODEC.writeTree(g, node);
+        g.close();
         assertEquals(INPUT, writer.toString());
     }
 
     public void testSimpleMixed() throws Exception
     {
         final String INPUT = "{\"a\":[1,2,{\"b\":true},3],\"c\":3}";
-        final TreeCodec treeCodec = new JacksonJrSimpleTreeCodec();
-        TreeNode node = treeCodec.readTree(_factory.createParser(INPUT));
+        TreeNode node = TREE_CODEC.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonObject);
         assertEquals(2, node.size());
         TreeNode list = node.get("a");
@@ -48,8 +49,9 @@ public class SimpleReadTest extends TestBase
 
         // actually, verify with write...
         final StringWriter writer = new StringWriter();
-        final JsonGenerator jsonGenerator = _factory.createGenerator(writer);
-        treeCodec.writeTree(jsonGenerator, node);
+        final JsonGenerator g = _factory.createGenerator(writer);
+        TREE_CODEC.writeTree(g, node);
+        g.close();
         assertEquals(INPUT, writer.toString());
     }
 }

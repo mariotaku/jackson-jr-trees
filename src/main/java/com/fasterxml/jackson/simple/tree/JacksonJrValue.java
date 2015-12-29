@@ -6,13 +6,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.simple.tree.util.TreeTraversingParser;
 
 /**
  * Shared base class for all "simple" node types of Jackson Jr
  * "simple tree" package; implements {@link TreeNode} and is usable
- * via matching {@link TreeCodec} implementation (see {@link JacksonJrSimpleTreeCodec}).
+ * via matching {@link com.fasterxml.jackson.core.TreeCodec}
+ * implementation (see {@link JacksonJrSimpleTreeCodec}).
  */
-abstract class JacksonJrValue implements TreeNode
+public abstract class JacksonJrValue implements TreeNode
 {
     protected static final JacksonJrValue MISSING = JsonMissing.instance();
 
@@ -62,14 +64,38 @@ abstract class JacksonJrValue implements TreeNode
     
     @Override
     public JsonParser traverse() {
-        return JacksonJrSimpleTreeCodec.SINGLETON.treeAsTokens(this);
+        return new TreeTraversingParser(this);
     }
 
     @Override
-    public JsonParser traverse(ObjectCodec objectCodec) {
-        return JacksonJrSimpleTreeCodec.SINGLETON.treeAsTokens(this);
+    public JsonParser traverse(ObjectCodec codec) {
+        return new TreeTraversingParser(this, codec);
     }
 
+    /*
+    /**********************************************************************
+    /* Extended API
+    /**********************************************************************
+     */
+
+    public boolean isNumber() {
+        return false;
+    }
+
+    /**
+     * Method that may be called on scalar value nodes to get a textual
+     * representation of contents.
+     */
+    public String asText() {
+        return null;
+    }
+
+    /*
+    /**********************************************************************
+    /* Helper classes
+    /**********************************************************************
+     */
+    
     /**
      * Intermediate base class for non-structured types, other than
      * {@link JsonMissing}.

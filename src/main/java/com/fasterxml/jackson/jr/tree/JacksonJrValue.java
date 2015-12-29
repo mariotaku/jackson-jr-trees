@@ -17,6 +17,7 @@ import com.fasterxml.jackson.jr.tree.util.TreeTraversingParser;
 public abstract class JacksonJrValue implements TreeNode
 {
     protected static final JacksonJrValue MISSING = JsonMissing.instance();
+    protected static final JacksonJrValue NULL = JsonNull.instance();
 
     @Override
     public JsonParser.NumberType numberType() {

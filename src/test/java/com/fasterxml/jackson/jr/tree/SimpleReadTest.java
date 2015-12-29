@@ -29,10 +29,10 @@ public class SimpleReadTest extends TestBase
 
     public void testSimpleMap() throws Exception
     {
-        final String INPUT = "{\"a\":1,\"b\":true,\"c\":3}";
+        final String INPUT = "{\"a\":1,\"b\":true,\"c\":3,\"d\":null}";
         TreeNode node = TREE_CODEC.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonObject);
-        assertEquals(3, node.size());
+        assertEquals(4, node.size());
         // actually, verify with write...
         final StringWriter writer = new StringWriter();
         final JsonGenerator g = _factory.createGenerator(writer);
@@ -43,10 +43,10 @@ public class SimpleReadTest extends TestBase
 
     public void testSimpleMixed() throws Exception
     {
-        final String INPUT = "{\"a\":[1,2,{\"b\":true},3],\"c\":3}";
+        final String INPUT = "{\"a\":[1,2,{\"b\":true},3],\"c\":3,\"d\":null}";
         TreeNode node = TREE_CODEC.readTree(_factory.createParser(INPUT));
         assertTrue(node instanceof JsonObject);
-        assertEquals(2, node.size());
+        assertEquals(3, node.size());
         TreeNode list = node.get("a");
         assertTrue(list instanceof JsonArray);
 

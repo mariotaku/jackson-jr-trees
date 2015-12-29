@@ -56,7 +56,7 @@ public class JacksonJrSimpleTreeCodec extends TreeCodec
             }
             node = new JsonObject(values);
         } else if (currentToken == JsonToken.VALUE_NULL) {
-            node = null;
+            node = JsonNull.instance;
         } else {
             throw new UnsupportedOperationException("Unsupported token " + currentToken);
         }
@@ -69,7 +69,7 @@ public class JacksonJrSimpleTreeCodec extends TreeCodec
     }
 
     private void writeTreeInternal(JsonGenerator g, final TreeNode treeNode) throws IOException {
-        if (treeNode == null) {
+        if (treeNode instanceof JsonNull) {
             g.writeNull();
         } else if (treeNode instanceof JsonBoolean) {
             g.writeBoolean(treeNode == JsonBoolean.TRUE);
@@ -138,6 +138,10 @@ public class JacksonJrSimpleTreeCodec extends TreeCodec
 
     public TreeNode missingNode() {
         return JsonMissing.instance;
+    }
+
+    public TreeNode nullNode() {
+        return JsonNull.instance;
     }
 
     /*
